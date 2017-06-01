@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">MAGSample</string>
-    <string name="btnLogin">Login</string>
-    <string name="lblUsuario">Usuario</string>
-    <string name="lblSenha">Senha</string>
-</resources>
