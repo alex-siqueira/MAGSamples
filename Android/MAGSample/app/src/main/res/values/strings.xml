@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">MAGSample</string>
+    <string name="lblLoginLabel">Faça seu login para continuar...</string>
+    <string name="txtUserDesc">E-mail do usuário</string>
+    <string name="txtPasswordDesc">Senha</string>
+</resources>
