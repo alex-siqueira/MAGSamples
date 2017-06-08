@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import com.ca.mas.core.auth.AuthenticationException;
 import com.ca.mas.foundation.MASCallback;
 import com.ca.mas.foundation.MASUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -27,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
 
         String username = txtUser.getText().toString();
         String password = txtPassword.getText().toString();
+
+        Log.d("LoginActivity", FirebaseInstanceId.getInstance().getToken());
 
         MASUser.login(username, password.toCharArray(), new MASCallback<MASUser>() {
             public Handler getHandler() {

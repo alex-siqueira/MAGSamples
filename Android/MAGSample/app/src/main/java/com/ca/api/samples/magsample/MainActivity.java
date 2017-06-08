@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ca.api.samples.magsample.responseType.JSONArrayResponseBody;
 import com.ca.mas.core.http.MAGResponseBody;
 import com.ca.mas.foundation.MAS;
 import com.ca.mas.foundation.MASAuthenticationListener;
@@ -19,6 +21,8 @@ import com.ca.mas.foundation.MASResponse;
 import com.ca.mas.foundation.MASUser;
 import com.ca.mas.foundation.auth.MASAuthenticationProviders;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,13 +65,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void invoke(View view){
-        MASRequest.MASRequestBuilder reqBuilder = new MASRequest.MASRequestBuilder(new Uri.Builder().encodedPath("/gpm/servicos").build());
+        MASRequest.MASRequestBuilder reqBuilder = new MASRequest.MASRequestBuilder(new Uri.Builder().encodedPath("/cidadao/v1/pessoas/eu/servicos").build());
 
-        MASRequest req = reqBuilder.responseBody(MAGResponseBody.jsonBody()).get().build();
-        MAS.invoke(req, new MASCallback<MASResponse<JSONObject>>() {
+        MASRequest req = reqBuilder.responseBody(new JSONArrayResponseBody()).get().build();
+        MAS.invoke(req, new MASCallback<MASResponse<JSONArray>>() {
             @Override
-            public void onSuccess(MASResponse<JSONObject> result) {
-                textView.setText(result.toString());
+            public void onSuccess(MASResponse<JSONArray> result) {
+                try {
+                    JSONArray servicos = result.getBody().getContent();
+                    for (int i = 0; i < servicos.length(); i++) {
+                        JSONObject servico = servicos.getJSONObject(i);
+                        Toast.makeText(getApplicationContext(), "Serviço: " + servico.getString("id"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException jEx){
+                    Toast.makeText(getApplicationContext(), "Erro convvertendo serviços! ", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
