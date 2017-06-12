@@ -1,32 +1,32 @@
 {
   "server": {
-    "hostname": "apigateway1.local",
+    "hostname": "gateway.gpm.solutions",
     "port": 8443,
     "prefix": "",
     "server_certs": [
       [
-        "-----BEGIN CERTIFICATE-----", "MIIC/TCCAeWgAwIBAgIJALo1Sls0fukdMA0GCSqGSIb3DQEBDAUAMBwxGjAYBgNVBAMTEWFwaWdh", "dGV3YXkxLmxvY2FsMB4XDTE2MDYyMTEyMTA1MloXDTIxMDYyMDEyMTA1MlowHDEaMBgGA1UEAxMR", "YXBpZ2F0ZXdheTEubG9jYWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCrOmOTRk+R", "mzr48uoM9GKqBIZF4L4WdgnqQOgRu4dtRvUIXVvsIMq8sFj8KHH/9dwJD2dIyhe8uG1s6FTU1Vie", "O1qQ5k9qcqWntr7fUwnPNZe/dowXnwpYiq6iKhNJw5FTMTDPx9yPcOIY9Mk6fxZnlnvGC8i16Edm", "+zF8RszVTKQkLaO1F4LLNeYZBRBauYqSQsuQBVmgvQtjYaxH+KuQtJhMu2W80XRQh0M+JBo4cDAe", "mubmq+kuRVhXYo9PmgCta0akSxooUmfQgD6v72QwS/89FYuGLP+IOtFoHGIEFbYFs1Sxrfz2ZKY2", "zI1DEgSY7FQCfQ2K4d5U5TItD7j3AgMBAAGjQjBAMB0GA1UdDgQWBBQDhSaeVOoSxCJ36652Vpgc", "zirIzzAfBgNVHSMEGDAWgBQDhSaeVOoSxCJ36652VpgczirIzzANBgkqhkiG9w0BAQwFAAOCAQEA", "nkx/aplPoVaee7wqB7QaPHzYpdmm9oILhHXnIhjQKwD680NZxnWMna9wZY9l5QYrti2J3uyzGWus", "GDdZoZoXzk9zvL6df1sY9lAC6Cvyfhl5GF4BdKOoNHzQcp/DbBuSWkrGVP2zB2s0Mhf6Tpd3agOw", "4EaqkFkKixrfikc2WjuqBub1aLY0dTQvB8gIcGWm32QFL6EpE8x8yh0MDcvGsxPWfrW99rgOhAWs", "eoYw3tumE43SAtn5qDchAv96Ri9eSnahNaMlSeuh9PT+chy9QK8QHHCmJ6LK9lCqlMoCPCikiwnQ", "lMbgLTV5pB78u65+zC/d/XkBoJ6wCDEMTlqyzg==", "-----END CERTIFICATE-----"
+        "-----BEGIN CERTIFICATE-----", "MIIDBDCCAeygAwIBAgIIF7MUc3xhfTUwDQYJKoZIhvcNAQEMBQAwIDEeMBwGA1UEAxMVZ2F0ZXdh", "eS5ncG0uc29sdXRpb25zMB4XDTE2MTIyNzIyNTM1NVoXDTI2MTIyNTIyNTM1NVowIDEeMBwGA1UE", "AxMVZ2F0ZXdheS5ncG0uc29sdXRpb25zMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA", "gj9Xo6k5GS+S51iU9yLbudgMl2gv5uQ1eDfAZ0vDqsTAef2QuXuBW5E2U/hUSVqqxXb03mH/ICRg", "7Sz8N6CqGL0ODCLIGIOl00AblMUlM34sR02Joj5kNWUoo+bL5Lgs9jeo2ykykja5ao1Iu/ohtyGC", "fcmne44CsD2yxt3HSWZaxKCO76dnQSw+wdVTPkrPQThV4YFBI2NRZbuGColSVE9BTVIAtaU3QmTj", "XVi6M1BA/Ouhfmhk3//KsezTTX3poNfw/AWUG/cF68U/c7Bynq+knKtrnKEosDZS17srXavUq2Uw", "hMHNHRtfcDGKwsueaqktZ4QcVdnexCYNPro0pQIDAQABo0IwQDAdBgNVHQ4EFgQUhkAsZwSahjCe", "+L29EIX3YWbtCIwwHwYDVR0jBBgwFoAUhkAsZwSahjCe+L29EIX3YWbtCIwwDQYJKoZIhvcNAQEM", "BQADggEBAFuU5n4voKinarRd11pTsD/ru9bsGokt9MW1ztm3n7qt0XiBzDZgo2nojoR0KIIqlsAQ", "iWSpSRDYadBliINQJQhnn5AJuQysTnhe0nCO4Q+5OSB1sO7ress1Mee5L1Fj4i3ljbnFTH24GD8H", "5ct5+NVsdPFItWSAic3Y52JgkMfv5WV8O98oOEonkKzAVQiKRwvAoyyI/e5JyUBd4ERBquFqKHCN", "p/OGiULI0O1cDSTrY53lqTR1uJoK4x51UIAAt//DhQuv+kSyyt4YltP/LgHK0P6FJneSDmt5ogql", "+Qr8IUXPBifiVCMxSdO6rFHp853K3T1fgZvVN9hjtlS5hqU=", "-----END CERTIFICATE-----"
       ]
     ]
   },
   "oauth": {
     "client": {
-      "organization": "CA",
+      "organization": "Governo na Palma da Mão",
       "description": "What is the app used for?",
-      "client_name": "TestMag",
+      "client_name": "GPM",
       "client_type": "confidential",
-      "registered_by": "admin",
+      "registered_by": "gpm",
       "client_custom": {},
       "client_ids": [
 
         {
-          "client_id": "a125c939-2480-4a61-a332-ca2a7f2f20d9",
+          "client_id": "8c4474c2-8196-4015-b5c0-d32e53739490",
           "client_secret": "",
-          "scope": "openid msso msso_client_register",
+          "scope": "openid msso",
           "redirect_uri": "https://android.ssosdk.ca.com/android",
-          "environment": "ALL",
+          "environment": "Android",
           "status": "ENABLED",
-          "registered_by": "admin",
+          "registered_by": "gpm",
           "service_ids": "",
           "account_plan_mapping_ids": "",
           "client_key_custom": {}
@@ -47,9 +47,11 @@
   "mag": {
     "system_endpoints": {
       "device_register_endpoint_path": "/connect/device/register",
+      "device_renew_endpoint_path": "/connect/device/renew",
       "device_client_register_endpoint_path": "/connect/device/register/client",
       "device_remove_endpoint_path": "/connect/device/remove",
-      "client_credential_init_endpoint_path": "/connect/client/initialize"
+      "client_credential_init_endpoint_path": "/connect/client/initialize",
+      "authenticate_otp_endpoint_path": "/auth/generateOTP"
     },
     "oauth_protected_endpoints": {
       "enterprise_browser_endpoint_path": "/connect/enterprise/browser",
@@ -60,7 +62,7 @@
       "location_enabled": true,
       "location_provider": "network",
       "msisdn_enabled": true,
-      "enable_public_key_pinning": true,
+      "enable_public_key_pinning": false,
       "trusted_public_pki": false,
       "trusted_cert_pinned_public_key_hashes": [],
       "client_cert_rsa_keybits": 1024

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "795110352220",
+    "firebase_url": "https://magsample-db6eb.firebaseio.com",
+    "project_id": "magsample-db6eb",
+    "storage_bucket": "magsample-db6eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795110352220:android:31baf8ccc0d0ac1b",
+        "android_client_info": {
+          "package_name": "com.ca.api.samples.magsample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795110352220-ud3ev92bu2le9g7hqlltrj60l39jqem5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWg5XD-mTeyfXy7oKa3yAid02_LarXk-A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

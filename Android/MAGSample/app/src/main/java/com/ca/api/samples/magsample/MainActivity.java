@@ -1,80 +1,107 @@
 package com.ca.api.samples.magsample;
 
-import android.app.Activity;
-import android.os.Handler;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.ca.mas.core.MAGResultReceiver;
-import com.ca.mas.core.MobileSso;
-import com.ca.mas.core.MobileSsoFactory;
-import com.ca.mas.core.error.MAGError;
-import com.ca.mas.core.http.MAGRequest;
-import com.ca.mas.core.http.MAGResponse;
+import com.ca.api.samples.magsample.responseType.JSONArrayResponseBody;
 import com.ca.mas.core.http.MAGResponseBody;
+import com.ca.mas.foundation.MAS;
+import com.ca.mas.foundation.MASAuthenticationListener;
+import com.ca.mas.foundation.MASCallback;
+import com.ca.mas.foundation.MASOtpAuthenticationHandler;
+import com.ca.mas.foundation.MASRequest;
+import com.ca.mas.foundation.MASResponse;
+import com.ca.mas.foundation.MASUser;
+import com.ca.mas.foundation.auth.MASAuthenticationProviders;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
-
-public class MainActivity extends Activity {
-    private Button btnLogoff;
-    private TextView result;
-    private MobileSso sso;
+public class MainActivity extends AppCompatActivity {
+    protected TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (sso == null) {
-            sso = MobileSsoFactory.getInstance(this);
-        }
+        textView = (TextView)findViewById(R.id.textView);
 
-        btnLogoff = (Button) findViewById(R.id.btnLogoff);
-        result = (TextView) findViewById(R.id.result);
+        startMAS();
+
+        if (MASUser.getCurrentUser() == null){
+            Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(loginIntent);
+
+            finish();
+        }
     }
 
-    public void invoke(View view) {
-        result.setText("");
+    private void startMAS() {
+        MAS.start(this);
+        MAS.debug();
 
-        MAGRequest.MAGRequestBuilder requestBuilder = new MAGRequest.MAGRequestBuilder(sso.getURI(sso.getPrefix() + "/magsample"));
-
-        MAGRequest request = requestBuilder
-                .responseBody(MAGResponseBody.jsonBody())
-                .build();
-        sso.processRequest(request, new MAGResultReceiver<JSONObject>(new Handler()) {
-
+        MAS.setAuthenticationListener(new MASAuthenticationListener() {
             @Override
-            public void onSuccess(final MAGResponse<JSONObject> response) {
-                Snackbar success = Snackbar.make(findViewById(R.id.layout), response.getResponseMessage(), Snackbar.LENGTH_SHORT);
-                result.setText(response.getBody().getContent().toString());
-                success.show();
+            public void onAuthenticateRequest(Context context, long requestId, MASAuthenticationProviders providers) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity (intent);
+                finish();
             }
 
             @Override
-            public void onError(MAGError error) {
-                Snackbar err = Snackbar.make(findViewById(R.id.layout), error.getCause().getMessage(), Snackbar.LENGTH_SHORT);
-                err.show();
-            }
-
-            @Override
-            public void onRequestCancelled() {
-                Snackbar cancel = Snackbar.make(findViewById(R.id.layout), "Cancelled", Snackbar.LENGTH_SHORT);
-                cancel.show();
+            public void onOtpAuthenticateRequest(Context context, MASOtpAuthenticationHandler handler) {
+                Log.d("MAS", "OTP Login flow");
             }
         });
-
-        if (sso.isAppLogon()) {
-            btnLogoff.setEnabled(true);
-        }
     }
 
-    public void logoff(View view) {
-        sso.logout(false);
-        btnLogoff.setEnabled(false);
+    public void invoke(View view){
+        MASRequest.MASRequestBuilder reqBuilder = new MASRequest.MASRequestBuilder(new Uri.Builder().encodedPath("/cidadao/v1/pessoas/eu/servicos").build());
+
+        MASRequest req = reqBuilder.responseBody(new JSONArrayResponseBody()).get().build();
+        MAS.invoke(req, new MASCallback<MASResponse<JSONArray>>() {
+            @Override
+            public void onSuccess(MASResponse<JSONArray> result) {
+                try {
+                    JSONArray servicos = result.getBody().getContent();
+                    for (int i = 0; i < servicos.length(); i++) {
+                        JSONObject servico = servicos.getJSONObject(i);
+                        Toast.makeText(getApplicationContext(), "Serviço: " + servico.getString("id"), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException jEx){
+                    Toast.makeText(getApplicationContext(), "Erro convvertendo serviços! ", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d("MAS", "Error");
+            }
+        });
+    }
+
+    public void logout(View view){
+        if (MASUser.getCurrentUser() != null){
+            MASUser.getCurrentUser().logout(new MASCallback<Void>() {
+                @Override
+                public void onSuccess(Void result) {
+                    Log.d("MAS", "Logged off");
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.d("MAS", "Error! " + e.getLocalizedMessage());
+                }
+            });
+        }
     }
 }
