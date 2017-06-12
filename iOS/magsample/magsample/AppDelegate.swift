@@ -18,6 +18,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         MAS.setGrantFlow(MASGrantFlow.password)
+        MAS.setGatewayNetworkActivityLogging(true)
+        
+        MAS.setUserLoginBlock { (basicBlock, authcodeBlock) in
+            
+            // incluir alert para pegar novas credenciais
+            basicBlock("gpm", "gpm", false, { (completed, error) in
+                if (error != nil){
+                    print ("erro")
+                }
+            })
+        }
         
         MAS.start { (completed, error) in
             if (error != nil){
@@ -26,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("MAS Started!")
             }
         }
-        
+
         return true
     }
 

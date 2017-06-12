@@ -16,6 +16,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        if (MASUser.current() == nil){
+            performSegue(withIdentifier: "login", sender: self)
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -36,8 +42,6 @@ class ViewController: UIViewController {
     @IBAction func logout(_ sender: UIButton) {
         var user: MASUser
         user = MASUser.current()!
-
-        print(user.isAuthenticated)
         user.logout { (completed, error) in
             if (error != nil){
                 print (error!.localizedDescription)

@@ -15,9 +15,8 @@
 		FA0D5A461ED1300D00B11F61 /* magsampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5A451ED1300D00B11F61 /* magsampleTests.swift */; };
 		FA0D5A511ED1300D00B11F61 /* magsampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0D5A501ED1300D00B11F61 /* magsampleUITests.swift */; };
 		FA0D5A611ED1325900B11F61 /* MASFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA0D5A5E1ED1325900B11F61 /* MASFoundation.framework */; };
-		FA0D5A621ED1325900B11F61 /* MASUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA0D5A5F1ED1325900B11F61 /* MASUI.framework */; };
-		FA0D5A631ED1325900B11F61 /* MASUIResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FA0D5A601ED1325900B11F61 /* MASUIResources.bundle */; };
 		FA0D5A651ED1325E00B11F61 /* msso_config.json in Resources */ = {isa = PBXBuildFile; fileRef = FA0D5A641ED1325E00B11F61 /* msso_config.json */; };
+		FA657BA51EEAF0D5003F3152 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA657BA41EEAF0D5003F3152 /* LoginViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,10 +51,9 @@
 		FA0D5A501ED1300D00B11F61 /* magsampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = magsampleUITests.swift; sourceTree = "<group>"; };
 		FA0D5A521ED1300D00B11F61 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA0D5A5E1ED1325900B11F61 /* MASFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MASFoundation.framework; sourceTree = "<group>"; };
-		FA0D5A5F1ED1325900B11F61 /* MASUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MASUI.framework; sourceTree = "<group>"; };
-		FA0D5A601ED1325900B11F61 /* MASUIResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MASUIResources.bundle; sourceTree = "<group>"; };
 		FA0D5A641ED1325E00B11F61 /* msso_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = msso_config.json; sourceTree = "<group>"; };
 		FA0D5A661ED1326A00B11F61 /* magsample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = magsample.entitlements; sourceTree = "<group>"; };
+		FA657BA41EEAF0D5003F3152 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ../LoginViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +61,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA0D5A621ED1325900B11F61 /* MASUI.framework in Frameworks */,
 				FA0D5A611ED1325900B11F61 /* MASFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,8 +87,6 @@
 			children = (
 				FA0D5A641ED1325E00B11F61 /* msso_config.json */,
 				FA0D5A5E1ED1325900B11F61 /* MASFoundation.framework */,
-				FA0D5A5F1ED1325900B11F61 /* MASUI.framework */,
-				FA0D5A601ED1325900B11F61 /* MASUIResources.bundle */,
 				FA0D5A2F1ED1300D00B11F61 /* magsample */,
 				FA0D5A441ED1300D00B11F61 /* magsampleTests */,
 				FA0D5A4F1ED1300D00B11F61 /* magsampleUITests */,
@@ -112,6 +107,7 @@
 		FA0D5A2F1ED1300D00B11F61 /* magsample */ = {
 			isa = PBXGroup;
 			children = (
+				FA657BA61EEAF101003F3152 /* login */,
 				FA0D5A661ED1326A00B11F61 /* magsample.entitlements */,
 				FA0D5A301ED1300D00B11F61 /* AppDelegate.swift */,
 				FA0D5A321ED1300D00B11F61 /* ViewController.swift */,
@@ -139,6 +135,14 @@
 				FA0D5A521ED1300D00B11F61 /* Info.plist */,
 			);
 			path = magsampleUITests;
+			sourceTree = "<group>";
+		};
+		FA657BA61EEAF101003F3152 /* login */ = {
+			isa = PBXGroup;
+			children = (
+				FA657BA41EEAF0D5003F3152 /* LoginViewController.swift */,
+			);
+			name = login;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,7 +264,6 @@
 				FA0D5A381ED1300D00B11F61 /* Assets.xcassets in Resources */,
 				FA0D5A651ED1325E00B11F61 /* msso_config.json in Resources */,
 				FA0D5A361ED1300D00B11F61 /* Main.storyboard in Resources */,
-				FA0D5A631ED1325900B11F61 /* MASUIResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +288,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA657BA51EEAF0D5003F3152 /* LoginViewController.swift in Sources */,
 				FA0D5A331ED1300D00B11F61 /* ViewController.swift in Sources */,
 				FA0D5A311ED1300D00B11F61 /* AppDelegate.swift in Sources */,
 			);
