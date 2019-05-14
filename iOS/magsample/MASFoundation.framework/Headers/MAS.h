@@ -11,7 +11,9 @@
 @import Foundation;
 
 #import "MASConstants.h"
-
+#import "MASClaims.h"
+#import "MASRequest.h"
+#import "MASMultiFactorAuthenticator.h"
 
 /**
  * The top level MAS object represents the Mobile App Services SDK in it's entirety.  It
@@ -28,6 +30,21 @@
 ///--------------------------------------
 
 # pragma mark - Properties
+
+
+/**
+ Sets Keychain Sharing Group identifier that Mobile SDK will store, and access shared credentials with other applications.
+ If null value passed in, or it has never been configure prior to SDK initialization, the application's bundle identifier replaced last portion with 'singleSignOn' will be used.
+ 
+ i.e. if the application's bundle identifier is 'com.ca.mag.iosapplication', then Keychain Sharing Group, by default, will be 'com.ca.mag.singleSignOn' unless otherwsie specified with this method.
+ 
+ @warning *Important:* Keychain Sharing Group must be set before SDK initialization as group identifier will be used, and set as part of SDK initialization, and highly recommend this only once.
+
+ @param sharedKeychainGroup NSString value of Keychain Sharing Group identifier
+ */
++ (void)setKeychainSharingGroup:(NSString *_Nonnull)keychainSharingGroup;
+
+
 
 /**
  *  Set the name of the configuration file.  This gives the ability to set the file's name
@@ -58,7 +75,65 @@
 
 
 /**
- *  Sets BOOL indicator of PKCE (Proof KEy for Code Exchange) enabled or not for authorization process in Social Login, and Proximity Login.
+ Sets boolean indicator of enforcing id_token validation upon device registration/user authentication. id_token is being validated as part of authentication/registration process against known signing algorithm.
+ Mobile SDK currently supports following algorithm(s):
+ - HS256
+ 
+ Any other signing algorithm will cause authentication/registration failure due to unknown signing algorithm.  If the server side is configured to return a different or custom algorithm, ensure to disable id_token validation to avoid any failure on Mobile SDK.
+ 
+ By default, id_token validation is enabled and enforced in authentication and/or registration process; it can be opted-out.
+
+ @param enable BOOL value of indicating whether id_token validation is enabled or not.
+ */
++ (void)enableIdTokenValidation:(BOOL)enable;
+
+
+
+/**
+ Gets boolean indicator of enforcing id_token validation upon device registration/user authentication. id_token is being validated as part of authentication/registration process against known signing algorithm.
+ Mobile SDK currently supports following algorithm(s):
+ - HS256
+ 
+ Any other signing algorithm will cause authentication/registration failure due to unknown signing algorithm.  If the server side is configured to return a different or custom algorithm, ensure to disable id_token validation to avoid any failure on Mobile SDK.
+ 
+ By default, id_token validation is enabled and enforced in authentication and/or registration process; it can be opted-out.
+ 
+ @return BOOL value of indicating whether id_token validation is enabled or not.
+ */
++ (BOOL)isIdTokenValidationEnabled;
+
+
+
+/**
+ Sets boolean indicator of enforcing JWKS loading upon MAS Start.
+ JWK Set - A JSON object that represents a set of JWKs.
+ JWK -  A JSON object that represents a cryptographic key.
+        The members of the object represent properties of the key, including its value.
+ 
+ By default, JWKSet loading is disabled.
+ 
+ @param enable BOOL value of indicating whether JWKSet loading is enabled or not.
+ */
++ (void)enableJWKSetLoading:(BOOL)enable;
+
+
+
+/**
+ Gets boolean indicator of enforcing JWKS loading upon MAS Start.
+ JWK Set - A JSON object that represents a set of JWKs.
+ JWK -  A JSON object that represents a cryptographic key.
+ The members of the object represent properties of the key, including its value.
+ 
+ By default, JWKSet loading is disabled.
+ 
+ @return BOOL value of indicating whether JWKSet loading is enabled or not.
+ */
++ (BOOL)isJWKSetLoadingEnabled;
+    
+
+
+/**
+ *  Sets BOOL indicator of PKCE (Proof Key for Code Exchange) enabled or not for authorization process in Social Login, and Proximity Login.
  *  By default, PKCE is enabled and enforced in authorization process; it can be opted-out.
  *
  *  @since MAS Client SDK 1.4 and MAG/OTK 4.0 on April 2017 release.
@@ -70,7 +145,7 @@
 
 
 /**
- *  Gets BOOL indicator of PKCE (Proof KEy for Code Exchange) enabled or not for authorization process in Social Login, and Proximity Login.
+ *  Gets BOOL indicator of PKCE (Proof Key for Code Exchange) enabled or not for authorization process in Social Login, and Proximity Login.
  *  By default, PKCE is enabled and enforced in authorization process; it can be opted-out.
  *
  *  @since MAS Client SDK 1.4 and MAG/OTK 4.0 on April 2017 release.
@@ -82,13 +157,13 @@
 
 
 /**
- *  Set a user login block to handle the case where the type set in 'setDeviceRegistrationType:(MASDeviceRegistrationType)'
- *  is 'MASDeviceRegistrationTypeUserCredentials'.  If it set to 'MASDeviceRegistrationTypeClientCredentials' this
- *  is not called.
+ *  Set a user auth credential block to handle the case where SDK requires auth credentials.
+ *  When MASGrantFlow is set to MASGrantFlowPassword, and auth credentials is required, SDK will invoke this block
+ *  to obtain MASAuthCredentials to proceed authentication process.
  *
- *  @param login The MASUserLoginWithUserCredentialsBlock to receive the request for user credentials.
+ *  @param userAuthCredentialsBlock MASUserAuthCredentialsBlock that contains callback block to be invoked with MASAuthCredentials.
  */
-+ (void)setUserLoginBlock:(MASUserLoginWithUserCredentialsBlock _Nullable)login;
++ (void)setUserAuthCredentials:(MASUserAuthCredentialsBlock _Nullable)userAuthCredentialsBlock;
 
 
 
@@ -111,21 +186,12 @@
 
 
 /**
- *  Sets the gateway monitoring block defined by the GatewayMonitorStatusBlock type.
- *  This block will be triggered when any change to the current monitoring status
- *  takes place with a MASGatewayMonitoringStatus.
- *
- *  The gateway monitoring status enumerated values are:
- *
- *      MASGatewayMonitoringStatusNotReachable
- *      MASGatewayMonitoringStatusReachableViaWWAN
- *      MASGatewayMonitoringStatusReachableViaWiFi
- *
- *  This is optional and it can be set to nil at any time to stop receiving the notifications.
- *
- *  @param monitor The MASGatewayMonitorStatusBlock that will receive the status updates.
+ * Sets Bool indicator of Browser Based Authentication (templatized login) enabled or not for authorization process.
+ * By default, it is disabled.
+
+ @param enable BOOL value indicating whether Browser Based Authentication is enabled or not.
  */
-+ (void)setGatewayMonitor:(MASGatewayMonitorStatusBlock _Nullable)monitor;
++ (void)enableBrowserBasedAuthentication:(BOOL)enable;
 
 
 
@@ -137,7 +203,6 @@
 + (MASState)MASState;
 
 
-#ifdef DEBUG
 
 /**
  *  Turn on or off the logging of the network activity with the Gateway.
@@ -146,7 +211,25 @@
  */
 + (void)setGatewayNetworkActivityLogging:(BOOL)enabled;
 
-#endif
+
+
+/**
+ *  Sets BOOL indicator whether the Keychain is synchronized through iCloud.
+ *  By default, the Keychain is not synchronized through iCloud.
+ *
+ *  @param enabled BOOL YES to enable synchroniztion, NO to disable it.
+ */
++ (void)setKeychainSynchronizable:(BOOL)enabled;
+
+
+
+/**
+ *  Gets BOOL indicator of Keychain sincronization enabled or not.
+ *  By default, the Keychain is not synchronized through iCloud.
+ *
+ *  @return return BOOL value indicating Keychain sincronization is enabled or not
+ */
++ (BOOL)isKeychainSynchronizable;
 
 
 
@@ -310,6 +393,27 @@
 # pragma mark - Gateway Monitoring
 
 /**
+ *  Sets the gateway monitoring block defined by the GatewayMonitorStatusBlock type.
+ *  This block will be triggered when any change to the current monitoring status
+ *  takes place with a MASGatewayMonitoringStatus.
+ *
+ *  The gateway monitoring status enumerated values are:
+ *
+ *      MASGatewayMonitoringStatusNotReachable
+ *      MASGatewayMonitoringStatusReachableViaWWAN
+ *      MASGatewayMonitoringStatusReachableViaWiFi
+ *
+ *  This is optional and it can be set to nil at any time to stop receiving the notifications.
+ *
+ *  Reachability status update can also be received as NSNotification. Subscribe notification key, MASGatewayMonitorStatusUpdateNotification, and notifications will be broadcasted whenever there is a change in network reachability status for the primary gateway on the payload of NSNotification as NSDictionary format @{ (NSString)"host" : (NSNumber)enumValue};
+ *
+ *  @param monitor The MASGatewayMonitorStatusBlock that will receive the status updates.
+ */
++ (void)setGatewayMonitor:(MASGatewayMonitorStatusBlock _Nullable)monitor;
+
+
+
+/**
  *  Retrieves a simple boolean indicator if the gateway is currently reachable or not.
  *
  *  @return Returns YES if it is reachable, NO if not.
@@ -369,8 +473,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)deleteFrom:(NSString *_Nonnull)endPointPath
-    withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-        andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+    withParameters:(NSDictionary *_Nullable)parameterInfo
+        andHeaders:(NSDictionary *_Nullable)headerInfo
         completion:(MASResponseInfoErrorBlock _Nullable)completion;
 
 
@@ -405,8 +509,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)deleteFrom:(NSString *_Nonnull)endPointPath
-    withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-        andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+    withParameters:(NSDictionary *_Nullable)parameterInfo
+        andHeaders:(NSDictionary *_Nullable)headerInfo
       requestType:(MASRequestResponseType)requestType
       responseType:(MASRequestResponseType)responseType
         completion:(MASResponseInfoErrorBlock _Nullable)completion;
@@ -445,8 +549,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)deleteFrom:(NSString *_Nonnull)endPointPath
-    withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-        andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+    withParameters:(NSDictionary *_Nullable)parameterInfo
+        andHeaders:(NSDictionary *_Nullable)headerInfo
        requestType:(MASRequestResponseType)requestType
       responseType:(MASRequestResponseType)responseType
           isPublic:(BOOL)isPublic
@@ -484,8 +588,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)getFrom:(NSString *_Nonnull)endPointPath
- withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-     andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+ withParameters:(NSDictionary *_Nullable)parameterInfo
+     andHeaders:(NSDictionary *_Nullable)headerInfo
      completion:(MASResponseInfoErrorBlock _Nullable)completion;
 
 
@@ -520,8 +624,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)getFrom:(NSString *_Nonnull)endPointPath
- withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-     andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+ withParameters:(NSDictionary *_Nullable)parameterInfo
+     andHeaders:(NSDictionary *_Nullable)headerInfo
     requestType:(MASRequestResponseType)requestType
    responseType:(MASRequestResponseType)responseType
      completion:(MASResponseInfoErrorBlock _Nullable)completion;
@@ -560,8 +664,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)getFrom:(NSString *_Nonnull)endPointPath
- withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-     andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+ withParameters:(NSDictionary *_Nullable)parameterInfo
+     andHeaders:(NSDictionary *_Nullable)headerInfo
     requestType:(MASRequestResponseType)requestType
    responseType:(MASRequestResponseType)responseType
        isPublic:(BOOL)isPublic
@@ -601,8 +705,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)patchTo:(NSString *_Nonnull)endPointPath
- withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-     andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+ withParameters:(NSDictionary *_Nullable)parameterInfo
+     andHeaders:(NSDictionary *_Nullable)headerInfo
      completion:(MASResponseInfoErrorBlock _Nullable)completion;
 
 
@@ -639,8 +743,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)patchTo:(NSString *_Nonnull)endPointPath
- withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-     andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+ withParameters:(NSDictionary *_Nullable)parameterInfo
+     andHeaders:(NSDictionary *_Nullable)headerInfo
     requestType:(MASRequestResponseType)requestType
    responseType:(MASRequestResponseType)responseType
      completion:(MASResponseInfoErrorBlock _Nullable)completion;
@@ -681,8 +785,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)patchTo:(NSString *_Nonnull)endPointPath
- withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-     andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+ withParameters:(NSDictionary *_Nullable)parameterInfo
+     andHeaders:(NSDictionary *_Nullable)headerInfo
     requestType:(MASRequestResponseType)requestType
    responseType:(MASRequestResponseType)responseType
        isPublic:(BOOL)isPublic
@@ -722,8 +826,8 @@
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)postTo:(NSString *_Nonnull)endPointPath
-withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-    andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+withParameters:(NSDictionary *_Nullable)parameterInfo
+    andHeaders:(NSDictionary *_Nullable)headerInfo
     completion:(MASResponseInfoErrorBlock _Nullable)completion;
 
 
@@ -760,8 +864,8 @@ withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)postTo:(NSString *_Nonnull)endPointPath
-withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-    andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+withParameters:(NSDictionary *_Nullable)parameterInfo
+    andHeaders:(NSDictionary *_Nullable)headerInfo
    requestType:(MASRequestResponseType)requestType
   responseType:(MASRequestResponseType)responseType
     completion:(MASResponseInfoErrorBlock _Nullable)completion;
@@ -802,8 +906,8 @@ withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)postTo:(NSString *_Nonnull)endPointPath
-withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-    andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+withParameters:(NSDictionary *_Nullable)parameterInfo
+    andHeaders:(NSDictionary *_Nullable)headerInfo
    requestType:(MASRequestResponseType)requestType
   responseType:(MASRequestResponseType)responseType
       isPublic:(BOOL)isPublic
@@ -843,8 +947,8 @@ withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)putTo:(NSString *_Nonnull)endPointPath
-withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-   andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+withParameters:(NSDictionary *_Nullable)parameterInfo
+   andHeaders:(NSDictionary *_Nullable)headerInfo
    completion:(MASResponseInfoErrorBlock _Nullable)completion;
 
 
@@ -881,8 +985,8 @@ withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)putTo:(NSString *_Nonnull)endPointPath
-withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-   andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+withParameters:(NSDictionary *_Nullable)parameterInfo
+   andHeaders:(NSDictionary *_Nullable)headerInfo
   requestType:(MASRequestResponseType)requestType
  responseType:(MASRequestResponseType)responseType
    completion:(MASResponseInfoErrorBlock _Nullable)completion;
@@ -923,13 +1027,81 @@ withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
  *      receive the JSON response object or an NSError object if there is a failure.
  */
 + (void)putTo:(NSString *_Nonnull)endPointPath
-withParameters:(NSDictionary<NSString *, NSString *> *_Nullable)parameterInfo
-   andHeaders:(NSDictionary<NSString *, NSString *> *_Nullable)headerInfo
+withParameters:(NSDictionary *_Nullable)parameterInfo
+   andHeaders:(NSDictionary *_Nullable)headerInfo
   requestType:(MASRequestResponseType)requestType
  responseType:(MASRequestResponseType)responseType
      isPublic:(BOOL)isPublic
    completion:(MASResponseInfoErrorBlock _Nullable)completion;
 
+
+
+/**
+ *  Invoke the endpoint with the parameters defined in the MASRequest object
+ *
+ *  If endPointPath is full URL format (including port number and http protocol), SDK will validate the server from the client side through SSL pinning (authentication challenge) with
+ *  provided subjectKeyHash (also known as public key hash) in configuration in mag.mobile_sdk.trusted_cert_pinned_public_key_hashes and mag.mobile_sdk.enable_public_key_pinning.
+ *  ALL of servers' public key hashes in certificate chain must be defined in the list.  This means when it is configured to use public key hash pinning for SSL pinning,
+ *  subjectKeyHash (public key hash) of the gateway must be also present within the list.  The list can contain multiple hash values in array for multiple servers.
+ *
+ *  When SDK fails to validate SSL with certificate or subjectKeyHash pinning for communication to HTTPs, SDK will cancel the request.
+ *
+ *  If endPointPath is full URL format, upon successful SSL pinning validation, SDK will also validate the user session against primary gateway regardless the request is being made
+ *  to the primary gateway or not.  To ensure bypass the user session validation for public API, use [MAS deleteFrom:withParameters:requestType:responseType:isPublic:completion:] method
+ *  with isPublic being YES.
+ *
+ *  @param request MASRequest An object containing all parameters to call the endpoint
+ *      When the value is set to true, all automatically injected credentials in SDK will be excluded in the request.
+ *  @param completion An MASResponseObjectErrorBlock (NSHTTPURLResponse *response, id responseObject, NSError *error) that will
+ *      receive the NSHTTPURLResponse object, response object which needs to perform type casting based on the object type, and NSError object when error occurs.
+ */
++ (void)invoke:(nonnull MASRequest *)request completion:(nullable MASResponseObjectErrorBlock)completion;
+
+
+
+///--------------------------------------
+/// @name JWT Signing
+///--------------------------------------
+
+# pragma mark - JWT Signing
+
+/**
+ Signs MASClaims object with default private key from device registration against primary gateway.
+ Some of read-write claims, such as exp, content, and/or contentType, should properly be prepared.
+
+ @param claims MASClaims object containing claims for JWT
+ @param error NSERror error reference object that returns any error occurred during JWT construction.
+ @return NSString of JWT token.
+ */
++ (NSString * _Nullable)signWithClaims:(MASClaims *_Nonnull)claims error:(NSError *__nullable __autoreleasing *__nullable)error;
+
+
+
+/**
+ Signs MASClaims object with custom private key in NSData format. Private key should be in NSData format and should have been signed using RS256 algorithm.
+ Some of read-write claims, such as exp, content, and/or contentType, should properly be prepared.
+ 
+ @param claims MASClaims object containing claims for JWT
+ @param privateKey Custom private key in NSData format signed using RS256 algorithm.
+ @param error NSERror error reference object that returns any error occurred during JWT construction.
+ @return NSString of JWT token.
+ */
++ (NSString * _Nullable)signWithClaims:(MASClaims *_Nonnull)claims privateKey:(NSData *_Nonnull)privateKey error:(NSError *__nullable __autoreleasing *__nullable)error;
+
+
+
+///--------------------------------------
+/// @name Multi Factor Authenticator
+///--------------------------------------
+
+# pragma mark - Multi Factor Authenticator
+
+/**
+ Static method to register custom MASMultiFactorAuthenticator object to handle multi factor authentication.
+
+ @param multiFactorAuthenticator MASObject that implements MASMultiFactorAuthenticator protocols.  The object must implement MASMultiFactorAuthenticator protocols.
+ */
++ (void)registerMultiFactorAuthenticator:(MASObject<MASMultiFactorAuthenticator> * _Nonnull)multiFactorAuthenticator;
 
 
 #ifdef DEBUG
