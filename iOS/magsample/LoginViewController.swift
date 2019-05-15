@@ -5,24 +5,27 @@
 //  Created by Alexandre Siqueira on 09/06/17.
 //  Copyright © 2017 Alexandre Siqueira. All rights reserved.
 //
-
 import Foundation
 import UIKit
 import MASFoundation
+import MASUI
 
-class LoginViewController: UIViewController {
+class LoginViewController: MASBaseLoginViewController {
     
     @IBOutlet weak var txtLogin: UITextField!
     
     @IBOutlet weak var txtPassword: UITextField!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillReload() {
+        super.viewWillReload()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func viewDidReload() {
+        super.viewDidReload()
+    }
+    
+    override func cancel() {
+        super.cancel()
     }
     
     @IBAction func login(_ sender: UIButton) {
